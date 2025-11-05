@@ -63,11 +63,7 @@ jobs:
             exit 0
           fi
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          OTP_ARG=""
-          if [ -n "${{ secrets.NPM_OTP:- }}" ]; then
-            OTP_ARG="--otp=${{ secrets.NPM_OTP }}"
-          fi
-          npm publish --access public ${OTP_ARG}
+          npm publish --access public
 
       - name: Skip npm publish (manual run without publish flag)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish != 'true'

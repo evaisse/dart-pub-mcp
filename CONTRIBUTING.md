@@ -29,6 +29,12 @@ Thanks for your interest in improving **dart-pub-mcp**! This project aims to mak
 - Reference related issues in your pull request description when applicable.
 - Include screenshots or terminal output for changes that affect user interaction or workflows, when helpful.
 
+## Releases & automation
+
+- GitHub Actions includes a release workflow that builds the project, attaches packaged artefacts to GitHub releases, and publishes to npm.
+- Configure repository secrets with an **npm automation token** (create via `Settings → Developer settings → Tokens → Generate automation token`) and store it as `NPM_TOKEN`. Automation tokens bypass OTP requirements so CI/CD can publish unattended.
+- When triggering the workflow manually, pass `publish=true` if you want to perform the npm publish step; otherwise the workflow will skip it.
+
 ## Code style
 
 - The project uses TypeScript in strict mode. Prefer explicit types when they aid readability, and lean on the existing helper utilities.
