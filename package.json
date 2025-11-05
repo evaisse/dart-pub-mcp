@@ -1,6 +1,6 @@
 {
   "name": "dart-pub-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server exposing pub.dev and local pub cache package information.",
   "main": "./dist/server.js",
   "types": "./dist/server.d.ts",
