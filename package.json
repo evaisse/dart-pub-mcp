@@ -1,0 +1,34 @@
+{
+  "name": "dart-pub-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing pub.dev and local pub cache package information.",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.0",
+    "semver": "^7.7.3",
+    "tar-stream": "^3.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/tar-stream": "^3.1.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.7"
+  }
+}
