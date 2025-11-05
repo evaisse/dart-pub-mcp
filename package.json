@@ -10,7 +10,8 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "pack:test": "npm pack --dry-run"
   },
   "keywords": [],
   "author": "",

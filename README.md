@@ -50,7 +50,7 @@ Below are sample configurations that call the server via `npx` (useful once the 
 claude mcp add dart-pub-mcp \
   --transport stdio \
   --command npx \
-  --arg dart-pub-mcp@X.Y.Z \
+  --arg dart-pub-mcp@latest \
   --arg start
 ```
 
@@ -63,7 +63,7 @@ claude mcp add dart-pub-mcp \
       "name": "dart-pub-mcp",
       "type": "stdio",
       "command": "npx",
-      "args": ["dart-pub-mcp@X.Y.Z", "start"]
+      "args": ["dart-pub-mcp@latest", "start"]
     }
   ]
 }
@@ -76,7 +76,7 @@ claude mcp add dart-pub-mcp \
   "mcpServers": {
     "dart-pub-mcp": {
       "command": "npx",
-      "args": ["dart-pub-mcp@X.Y.Z", "start"],
+      "args": ["dart-pub-mcp@latest", "start"],
       "transport": "stdio"
     }
   }
@@ -95,6 +95,9 @@ npm run build
 
 # Run automated tests
 npm test
+
+# Verify publishable package contents (dry run)
+npm run pack:test
 
 # Watch mode for local iteration
 npm run dev
