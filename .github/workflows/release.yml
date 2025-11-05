@@ -12,8 +12,6 @@ permissions:
 jobs:
   build-artifacts:
     runs-on: ubuntu-latest
-    env:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -51,11 +49,13 @@ jobs:
             *.tgz
 
       - name: Publish to npm
-        if: github.event_name == 'release' && env.NPM_TOKEN != ''
+        if: github.event_name == 'release'
         env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
-        run: npm publish --access public
-
-      - name: Skip npm publish (no token configured)
-        if: github.event_name == 'release' && env.NPM_TOKEN == ''
-        run: echo "NPM_TOKEN secret not set; skipping npm publish step."
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NPM_TOKEN:-}" ]; then
+            echo "NPM_TOKEN secret not set; skipping npm publish step."
+            exit 0
+          fi
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm publish --access public
