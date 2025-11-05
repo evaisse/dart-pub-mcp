@@ -40,6 +40,49 @@ npm start
 
 The server communicates over stdio, so you can connect with any MCP-compatible client (Claude Desktop, Claude Code, Cursor, the MCP Inspector, etc.). Use the resource URIs above to request data once connected.
 
+### Client configuration examples
+
+Below are sample configurations that call the server via `npx` (useful once the package is published to npm). Replace `X.Y.Z` with the desired version or omit it to always pull the latest.
+
+#### Claude Code / Claude Desktop (Claude CLI)
+
+```bash
+claude mcp add dart-pub-mcp \
+  --transport stdio \
+  --command npx \
+  --arg dart-pub-mcp@X.Y.Z \
+  --arg start
+```
+
+#### Gemini Code Assist (VS Code `google-gemini.json`)
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "dart-pub-mcp",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["dart-pub-mcp@X.Y.Z", "start"]
+    }
+  ]
+}
+```
+
+#### OpenAI Codex / o1-coder (VS Code `openai.json`)
+
+```json
+{
+  "mcpServers": {
+    "dart-pub-mcp": {
+      "command": "npx",
+      "args": ["dart-pub-mcp@X.Y.Z", "start"],
+      "transport": "stdio"
+    }
+  }
+}
+```
+
 ## Environment variables
 
 - `PUB_CACHE` – custom location of the pub cache. If unset, the server falls back to `~/.pub-cache`.
