@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish to npm when running manually (requires NPM_TOKEN secret)'
+        required: false
+        default: 'false'
 
 permissions:
   contents: write
@@ -49,7 +54,7 @@ jobs:
             *.tgz
 
       - name: Publish to npm
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
@@ -59,3 +64,7 @@ jobs:
           fi
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           npm publish --access public
+
+      - name: Skip npm publish (manual run without publish flag)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish != 'true'
+        run: echo "Manual run without publish=true; skipping npm publish."
