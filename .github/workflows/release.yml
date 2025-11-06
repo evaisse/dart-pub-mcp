@@ -1,12 +1,26 @@
 name: Release
 
+# IMPORTANT: This workflow requires an NPM Automation Token!
+# 
+# If you get an EOTP error (one-time password required), it means you're using
+# a regular token instead of an Automation token. NPM accounts with 2FA enabled
+# REQUIRE Automation tokens for CI/CD publishing.
+#
+# To create an NPM Automation Token:
+#   1. Go to https://www.npmjs.com
+#   2. Click your profile → Access Tokens
+#   3. Generate New Token → Select "Automation" type (NOT Classic or Granular)
+#   4. Copy the token and add it as NPM_TOKEN secret in GitHub repository settings
+#
+# See .github/NPM_RELEASE_SETUP.md for detailed setup instructions.
+
 on:
   release:
     types: [published]
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish to npm when running manually (requires NPM_TOKEN secret - must be an NPM Automation Token)'
+        description: 'Publish to npm when running manually (requires NPM_TOKEN secret - MUST be an NPM Automation Token, NOT a regular token. See .github/NPM_RELEASE_SETUP.md)'
         required: false
         default: 'false'
 
@@ -54,16 +68,74 @@ jobs:
           files: |
             *.tgz
 
-      - name: Publish to npm
+      - name: Validate NPM token configuration
         if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-            echo "NPM_TOKEN secret not set; skipping npm publish step."
-            exit 0
+            echo "❌ NPM_TOKEN secret not set but publishing was requested!"
+            echo ""
+            echo "To publish to NPM, you need to set up an NPM_TOKEN secret."
+            echo "See .github/NPM_RELEASE_SETUP.md for detailed instructions."
+            exit 1
           fi
+          
+          echo "✓ NPM_TOKEN is configured"
+          echo ""
+          echo "⚠️  IMPORTANT: Make sure you're using an NPM Automation Token!"
+          echo "   - NPM Automation Tokens bypass 2FA/OTP requirements"
+          echo "   - Regular tokens will fail with EOTP error if 2FA is enabled"
+          echo "   - See .github/NPM_RELEASE_SETUP.md for setup instructions"
+          echo ""
+          
+          # Check npm authentication
+          echo "Verifying NPM authentication..."
+          if npm whoami; then
+            echo "✓ Successfully authenticated to NPM registry"
+          else
+            echo "❌ Failed to authenticate to NPM registry"
+            echo ""
+            echo "Common causes:"
+            echo "  1. Token is invalid or expired"
+            echo "  2. Token doesn't have publish permissions"
+            echo "  3. Token is not an Automation token (required for 2FA accounts)"
+            echo ""
+            echo "Please check your NPM_TOKEN secret and make sure it's an Automation token."
+            echo "See .github/NPM_RELEASE_SETUP.md for detailed setup instructions."
+            exit 1
+          fi
+
+      - name: Publish to npm
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "Publishing to NPM with provenance..."
+          set +e  # Don't exit immediately on error
           npm publish --access public --provenance
+          EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+          
+          if [ $EXIT_CODE -eq 0 ]; then
+            echo "✓ Successfully published to NPM!"
+          else
+            echo ""
+            echo "❌ Failed to publish to NPM (exit code: $EXIT_CODE)"
+            echo ""
+            echo "If you see an EOTP error (one-time password required):"
+            echo "  → You MUST use an NPM Automation Token, not a regular token"
+            echo "  → Automation tokens bypass 2FA/OTP requirements"
+            echo "  → See .github/NPM_RELEASE_SETUP.md for setup instructions"
+            echo ""
+            echo "To create an NPM Automation Token:"
+            echo "  1. Go to https://www.npmjs.com"
+            echo "  2. Click your profile → Access Tokens"
+            echo "  3. Generate New Token → Select 'Automation' type"
+            echo "  4. Copy the token and add it as NPM_TOKEN secret in GitHub"
+            echo ""
+            exit $EXIT_CODE
+          fi
 
       - name: Skip npm publish (manual run without publish flag)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.publish != 'true'
