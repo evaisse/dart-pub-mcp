@@ -107,6 +107,10 @@ The repository uses TypeScript with `tsx` for local development. Build output is
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [AGENTS.md](AGENTS.md) for MCP client integration details.
 
+## Publishing Releases
+
+This repository uses automated NPM publishing via GitHub Actions. For information on setting up releases and configuring the NPM_TOKEN secret, see [.github/NPM_RELEASE_SETUP.md](.github/NPM_RELEASE_SETUP.md).
+
 ## Notes on the pub.dev API
 
 The implementation follows the publicly documented endpoints at [pub.dev/help/api](https://pub.dev/help/api):
