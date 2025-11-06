@@ -1,5 +1,9 @@
 # NPM Release Setup Guide
 
+⚠️ **CRITICAL: You MUST use an NPM Automation Token, NOT a regular token!**
+
+If you get an `EOTP` error (one-time password required) when publishing, it means you're using a regular token. NPM accounts with 2FA enabled **REQUIRE** Automation tokens for CI/CD publishing.
+
 This document explains how to set up NPM package publication for this repository.
 
 ## Prerequisites
@@ -27,7 +31,10 @@ The release workflow requires an NPM Automation Token to publish packages. This 
 
 3. **Generate New Token**
    - Click "Generate New Token"
-   - Select "**Automation**" as the token type (NOT Classic or Granular)
+   - **CRITICAL:** Select "**Automation**" as the token type
+     - ❌ NOT "Classic" 
+     - ❌ NOT "Granular"
+     - ✅ ONLY "Automation"
    - Give it a descriptive name like "GitHub Actions - dart-pub-mcp"
    - Click "Generate Token"
 
@@ -81,7 +88,20 @@ This error occurs when the authentication token is not properly configured. Make
 
 ### Error: EOTP (One-Time Password Required)
 
-This error means you're using a regular token instead of an automation token. NPM accounts with 2FA enabled require automation tokens for CI/CD. Follow the steps above to create a proper automation token.
+**This is the most common error!** This error means you're using a regular token instead of an automation token. 
+
+**Solution:**
+1. Delete your current NPM_TOKEN secret from GitHub
+2. Go to npmjs.com and delete the old token
+3. Create a NEW token and make absolutely sure you select **"Automation"** as the type
+4. Add the new automation token as NPM_TOKEN secret in GitHub
+
+⚠️ **Remember:** 
+- Automation tokens are specifically designed for CI/CD
+- Regular tokens (Classic/Granular) will ALWAYS fail with EOTP error if 2FA is enabled
+- You cannot convert a regular token to an automation token - you must create a new one
+
+NPM accounts with 2FA enabled require automation tokens for CI/CD. Follow the steps above to create a proper automation token.
 
 ### Workflow Not Triggering
 
