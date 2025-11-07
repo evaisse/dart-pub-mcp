@@ -16,6 +16,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evaisse/dart-pub-mcp"
+  },
   "type": "module",
   "files": [
     "dist"
